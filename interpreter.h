@@ -1,11 +1,10 @@
-/**************************
-File : interpreter.h
-Author : Brysen Landis
-Description: MIPS Interpreter
-**************************/
+/*
+File: interpreter.h
+Author: Brysen Landis
+*/
 
-#ifndef INTERPRETER_H
-#define INTERPRETER_H
+#ifndef INTERPRETER_COMPLETE_H
+#define INTERPRETER_COMPLETE_H
 
 #include <iostream>
 #include <vector>
@@ -25,6 +24,7 @@ public:
     
     // Main execution modes
     void runInteractive();
+    void runManualMode();
     void loadFile(const std::string& filename);
     void run();  // Run all instructions
     void step(); // Execute one instruction

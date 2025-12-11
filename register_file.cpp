@@ -140,60 +140,20 @@ int RegisterFile::getRegNumber(const std::string& regName)
 
 void RegisterFile::displayRegisters() 
 {
-    std::cout << "\n╔════════════════════════════════════════════════════════════════════════════════════════════════════╗" << std::endl;
-    std::cout << "║                                        REGISTER FILE                                               ║" << std::endl;
-    std::cout << "╠═════════════╦═════════════╦═════════════╦═════════════╦═════════════╦═════════════╦═════════════╣" << std::endl;
-    
-    // Row 1: zero, at, v0, v1, a0, a1, a2
-    std::cout << "║ $0 (zero)   ║ $1 (at)     ║ $2 (v0)     ║ $3 (v1)     ║ $4 (a0)     ║ $5 (a1)     ║ $6 (a2)     ║" << std::endl;
-    std::cout << "║ " << std::setw(11) << std::right << reg[0] 
-              << " ║ " << std::setw(11) << std::right << reg[1]
-              << " ║ " << std::setw(11) << std::right << reg[2]
-              << " ║ " << std::setw(11) << std::right << reg[3]
-              << " ║ " << std::setw(11) << std::right << reg[4]
-              << " ║ " << std::setw(11) << std::right << reg[5]
-              << " ║ " << std::setw(11) << std::right << reg[6] << " ║" << std::endl;
-    std::cout << "╠═════════════╬═════════════╬═════════════╬═════════════╬═════════════╬═════════════╬═════════════╣" << std::endl;
-    
-    // Row 2: a3, t0-t5
-    std::cout << "║ $7 (a3)     ║ $8 (t0)     ║ $9 (t1)     ║ $10 (t2)    ║ $11 (t3)    ║ $12 (t4)    ║ $13 (t5)    ║" << std::endl;
-    std::cout << "║ " << std::setw(11) << std::right << reg[7]
-              << " ║ " << std::setw(11) << std::right << reg[8]
-              << " ║ " << std::setw(11) << std::right << reg[9]
-              << " ║ " << std::setw(11) << std::right << reg[10]
-              << " ║ " << std::setw(11) << std::right << reg[11]
-              << " ║ " << std::setw(11) << std::right << reg[12]
-              << " ║ " << std::setw(11) << std::right << reg[13] << " ║" << std::endl;
-    std::cout << "╠═════════════╬═════════════╬═════════════╬═════════════╬═════════════╬═════════════╬═════════════╣" << std::endl;
-    
-    // Row 3: t6, t7, s0-s4
-    std::cout << "║ $14 (t6)    ║ $15 (t7)    ║ $16 (s0)    ║ $17 (s1)    ║ $18 (s2)    ║ $19 (s3)    ║ $20 (s4)    ║" << std::endl;
-    std::cout << "║ " << std::setw(11) << std::right << reg[14]
-              << " ║ " << std::setw(11) << std::right << reg[15]
-              << " ║ " << std::setw(11) << std::right << reg[16]
-              << " ║ " << std::setw(11) << std::right << reg[17]
-              << " ║ " << std::setw(11) << std::right << reg[18]
-              << " ║ " << std::setw(11) << std::right << reg[19]
-              << " ║ " << std::setw(11) << std::right << reg[20] << " ║" << std::endl;
-    std::cout << "╠═════════════╬═════════════╬═════════════╬═════════════╬═════════════╬═════════════╬═════════════╣" << std::endl;
-    
-    // Row 4: s5, s6, s7, t8, t9, k0, k1
-    std::cout << "║ $21 (s5)    ║ $22 (s6)    ║ $23 (s7)    ║ $24 (t8)    ║ $25 (t9)    ║ $26 (k0)    ║ $27 (k1)    ║" << std::endl;
-    std::cout << "║ " << std::setw(11) << std::right << reg[21]
-              << " ║ " << std::setw(11) << std::right << reg[22]
-              << " ║ " << std::setw(11) << std::right << reg[23]
-              << " ║ " << std::setw(11) << std::right << reg[24]
-              << " ║ " << std::setw(11) << std::right << reg[25]
-              << " ║ " << std::setw(11) << std::right << reg[26]
-              << " ║ " << std::setw(11) << std::right << reg[27] << " ║" << std::endl;
-    std::cout << "╠═════════════╬═════════════╬═════════════╬═════════════╬═════════════╬═════════════╬═════════════╣" << std::endl;
-    
-    // Row 5: Special registers - gp, sp, fp, ra
-    std::cout << "║ $28 (gp)    ║ $29 (sp)    ║ $30 (fp)    ║ $31 (ra)    ║             ║             ║             ║" << std::endl;
-    std::cout << "║ " << std::setw(11) << std::right << reg[28]
-              << " ║ " << std::setw(11) << std::right << reg[29]
-              << " ║ " << std::setw(11) << std::right << reg[30]
-              << " ║ " << std::setw(11) << std::right << reg[31]
-              << " ║             ║             ║             ║" << std::endl;
-    std::cout << "╚═════════════╩═════════════╩═════════════╩═════════════╩═════════════╩═════════════╩═════════════╝" << std::endl;
+    std::cout << "\n";
+    std::cout << "┌──────────────────────────────────────────────────────────────────────────────────────────────────┐\n";
+    std::cout << "│ zero at   v0   v1   a0   a1   a2   a3   t0   t1   t2   t3   t4   t5   t6   t7                  │\n";
+    std::cout << "│ ";
+    for (int i = 0; i < 16; i++) {
+        std::cout << std::setw(4) << reg[i] << " ";
+    }
+    std::cout << "                 │\n";
+    std::cout << "├──────────────────────────────────────────────────────────────────────────────────────────────────┤\n";
+    std::cout << "│ s0   s1   s2   s3   s4   s5   s6   s7   t8   t9   k0   k1   gp   sp   fp   ra                  │\n";
+    std::cout << "│ ";
+    for (int i = 16; i < 32; i++) {
+        std::cout << std::setw(4) << reg[i] << " ";
+    }
+    std::cout << "                 │\n";
+    std::cout << "└──────────────────────────────────────────────────────────────────────────────────────────────────┘\n";
 }

@@ -1,8 +1,7 @@
-/**************************
-File : interpreter.cpp
-Author : Brysen Landis
-Description: MIPS Interpreter
-**************************/
+/*
+File: interpreter.cpp
+Author: Brysen Landis
+*/
 
 #include "interpreter.h"
 #include <cctype>
@@ -11,17 +10,17 @@ MIPSInterpreter::MIPSInterpreter()
     : PC(TEXT_BASE), HI(0), LO(0), currentDataAddr(DATA_BASE), 
       inDataSection(false), halted(false)
 {
-    // init stack pointer
+    // Initialize stack pointer
     regFile.setReg("$sp", STACK_BASE);
 }
 
 std::string MIPSInterpreter::cleanLine(const std::string& line)
 {
-    // remove comments
+    // Remove comments
     size_t commentPos = line.find('#');
     std::string cleaned = (commentPos != std::string::npos) ? line.substr(0, commentPos) : line;
     
-    // trim whitespace
+    // Trim whitespace
     size_t start = cleaned.find_first_not_of(" \t\r\n");
     size_t end = cleaned.find_last_not_of(" \t\r\n");
     
@@ -37,10 +36,10 @@ std::vector<std::string> MIPSInterpreter::tokenize(const std::string& line)
     
     while (ss >> token)
     {
-        // remove commas
+        // Remove commas
         token.erase(std::remove(token.begin(), token.end(), ','), token.end());
         
-        // handle parentheses for memory operations: offset($reg)
+        // Handle parentheses for memory operations: offset($reg)
         size_t parenPos = token.find('(');
         if (parenPos != std::string::npos)
         {
@@ -74,7 +73,7 @@ void MIPSInterpreter::parseFile(const std::string& filename)
         std::string cleaned = cleanLine(line);
         if (cleaned.empty()) continue;
         
-        // check for section directives
+        // Check for section directives
         if (cleaned == ".text")
         {
             inDataSection = false;
@@ -87,11 +86,11 @@ void MIPSInterpreter::parseFile(const std::string& filename)
         }
         else if (cleaned.substr(0, 6) == ".globl" || cleaned.substr(0, 7) == ".global")
         {
-            // ignore global directive
+            // Ignore global directive
             continue;
         }
         
-        // check for labels
+        // Check for labels
         size_t colonPos = cleaned.find(':');
         if (colonPos != std::string::npos)
         {
@@ -105,7 +104,7 @@ void MIPSInterpreter::parseFile(const std::string& filename)
                 labels[label] = TEXT_BASE + (instructionCount * 4);
             }
             
-            // process rest of line after label
+            // Process rest of line after label
             if (colonPos + 1 < cleaned.length())
             {
                 cleaned = cleanLine(cleaned.substr(colonPos + 1));
@@ -175,7 +174,7 @@ void MIPSInterpreter::processDataDirective(const std::vector<std::string>& token
         {
             std::string str = fullLine.substr(start + 1, end - start - 1);
             
-            // process escape sequences
+            // Process escape sequences
             for (size_t i = 0; i < str.length(); i++)
             {
                 if (str[i] == '\\' && i + 1 < str.length())
@@ -223,19 +222,19 @@ int MIPSInterpreter::parseImmediate(const std::string& str)
 {
     if (str.empty()) return 0;
     
-    // check for label reference
+    // Check for label reference
     if (labels.find(str) != labels.end())
     {
         return static_cast<int>(labels[str]);
     }
     
-    // handle hex
+    // Handle hex
     if (str.substr(0, 2) == "0x" || str.substr(0, 2) == "0X")
     {
         return static_cast<int>(std::stoul(str, nullptr, 16));
     }
     
-    // handle decimal (including negative)
+    // Handle decimal (including negative)
     return std::stoi(str);
 }
 
@@ -244,13 +243,13 @@ int MIPSInterpreter::getRegisterNumber(const std::string& regName)
     std::string clean = regName;
     if (clean[0] == '$') clean = clean.substr(1);
     
-    // check if it's a number
+    // Check if it's a number
     if (std::isdigit(clean[0]))
     {
         return std::stoi(clean);
     }
     
-    // use register file map
+    // Use register file map
     return regFile.getRegNumber(clean);
 }
 
@@ -815,14 +814,14 @@ void MIPSInterpreter::executePseudoInstruction(const std::vector<std::string>& t
         int rt = getRegisterNumber(tokens[1]);
         int imm = parseImmediate(tokens[2]);
         
-        // check if immediate fits in 16 bits
+        // Check if immediate fits in 16 bits
         if (imm >= -32768 && imm <= 32767)
         {
             regFile.setRegByNum(rt, static_cast<unsigned int>(imm));
         }
         else
         {
-            // use lui and ori for larger values
+            // Use lui and ori for larger values
             unsigned int upper = (imm >> 16) & 0xFFFF;
             unsigned int lower = imm & 0xFFFF;
             regFile.setRegByNum(rt, (upper << 16) | lower);
@@ -921,10 +920,9 @@ void MIPSInterpreter::executeSyscall()
             heapPtr += bytes;
             break;
         }
-        case 10: // exit
+        case 10:
         {
             halted = true;
-            std::cout << "\nProgram terminated." << std::endl;
             break;
         }
         case 11: // print character
@@ -956,8 +954,6 @@ void MIPSInterpreter::loadFile(const std::string& filename)
 
 void MIPSInterpreter::run()
 {
-    std::cout << "\n=== Running program ===" << std::endl;
-    
     while (!halted && PC >= TEXT_BASE && 
            addressToInstruction.find(PC) != addressToInstruction.end())
     {
@@ -966,7 +962,7 @@ void MIPSInterpreter::run()
     
     if (!halted)
     {
-        std::cout << "\nProgram completed." << std::endl;
+        std::cout << "Program complete.\n";
     }
 }
 
@@ -974,23 +970,19 @@ void MIPSInterpreter::step()
 {
     if (halted)
     {
-        std::cout << "Program has halted." << std::endl;
+        std::cout << "Program halted.\n";
         return;
     }
     
     if (addressToInstruction.find(PC) != addressToInstruction.end())
     {
-        std::cout << "\n┌─────────────────────────────────────────────────────────────┐" << std::endl;
-        std::cout << "│ EXECUTING: " << std::left << std::setw(48) << addressToInstruction[PC] << " │" << std::endl;
-        std::cout << "│ PC: 0x" << std::hex << std::setw(8) << std::setfill('0') << PC << std::dec << std::setfill(' ') 
-                  << "                                              │" << std::endl;
-        std::cout << "└─────────────────────────────────────────────────────────────┘" << std::endl;
-        
+        std::cout << "[0x" << std::hex << std::setw(8) << std::setfill('0') << PC << "] " 
+                  << std::dec << addressToInstruction[PC] << "\n";
         executeInstruction(addressToInstruction[PC]);
     }
     else
     {
-        std::cout << "No instruction at PC: 0x" << std::hex << PC << std::endl;
+        std::cout << "No instruction at PC: 0x" << std::hex << PC << "\n";
         halted = true;
     }
 }
@@ -998,15 +990,9 @@ void MIPSInterpreter::step()
 void MIPSInterpreter::displayState()
 {
     regFile.displayRegisters();
-    
-    // display special registers
-    std::cout << "\n┌─────────────┬──────────────┬──────────────┐" << std::endl;
-    std::cout << "│     PC      │      HI      │      LO      │" << std::endl;
-    std::cout << "├─────────────┼──────────────┼──────────────┤" << std::endl;
-    std::cout << "│  0x" << std::hex << std::setw(8) << std::setfill('0') << PC << " │  " 
-              << std::dec << std::setw(10) << std::setfill(' ') << HI << "  │  "
-              << std::setw(10) << std::setfill(' ') << LO << "  │" << std::endl;
-    std::cout << "└─────────────┴──────────────┴──────────────┘" << std::endl;
+    std::cout << "PC: 0x" << std::hex << std::setw(8) << std::setfill('0') << PC 
+              << " | HI: " << std::dec << std::setw(4) << HI 
+              << " | LO: " << std::setw(4) << LO << "\n";
 }
 
 void MIPSInterpreter::reset()
@@ -1027,23 +1013,20 @@ void MIPSInterpreter::reset()
 void MIPSInterpreter::runInteractive()
 {
     std::string input;
-    std::cout << "MIPS Interpreter - Interactive Mode" << std::endl;
-    std::cout << "Commands: load <file>, run, step, regs, reset, quit" << std::endl;
-    std::cout << "Or enter MIPS instructions directly" << std::endl;
-    std::cout << "\n> ";
+    std::cout << "MIPS Interpreter\n";
+    std::cout << "Commands: load <file>, run, step, regs, manual, reset, quit\n\n";
     
-    while (std::getline(std::cin, input))
+    while (true)
     {
+        std::cout << "> ";
+        if (!std::getline(std::cin, input)) break;
+        
         std::string cleaned = cleanLine(input);
-        if (cleaned.empty())
-        {
-            std::cout << "> ";
-            continue;
-        }
+        if (cleaned.empty()) continue;
         
         std::vector<std::string> tokens = tokenize(cleaned);
         
-        if (tokens[0] == "quit" || tokens[0] == "exit")
+        if (tokens[0] == "quit" || tokens[0] == "exit" || tokens[0] == "q")
         {
             break;
         }
@@ -1066,15 +1049,45 @@ void MIPSInterpreter::runInteractive()
         else if (tokens[0] == "reset")
         {
             reset();
-            std::cout << "Interpreter reset." << std::endl;
+            std::cout << "Reset.\n";
+        }
+        else if (tokens[0] == "manual" || tokens[0] == "m")
+        {
+            runManualMode();
         }
         else
         {
-            // execute as instruction
-            executeInstruction(cleaned);
+            std::cout << "Unknown command. Type 'manual' for instruction mode.\n";
+        }
+    }
+}
+
+void MIPSInterpreter::runManualMode()
+{
+    std::string input;
+    std::cout << "\nManual instruction mode (type 'back' to exit)\n";
+    
+    while (true)
+    {
+        std::cout << "PC:0x" << std::hex << std::setw(8) << std::setfill('0') << PC << "> " << std::dec;
+        if (!std::getline(std::cin, input)) break;
+        
+        std::string cleaned = cleanLine(input);
+        if (cleaned.empty()) continue;
+        
+        if (cleaned == "back" || cleaned == "exit" || cleaned == "quit")
+        {
+            std::cout << "\n";
+            break;
+        }
+        else if (cleaned == "regs")
+        {
             displayState();
         }
-        
-        std::cout << "\n> ";
+        else
+        {
+            executeInstruction(cleaned);
+            std::cout << "PC: 0x" << std::hex << PC << std::dec << "\n";
+        }
     }
 }
