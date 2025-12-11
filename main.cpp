@@ -10,11 +10,25 @@ Author: Brysen Landis
 
 void printHelp()
 {
-    std::cout << "\nMIPS Interpreter\n";
-    std::cout << "Usage:\n";
-    std::cout << "  ./mips                  Interactive mode\n";
-    std::cout << "  ./mips <file>           Load and run\n";
-    std::cout << "  ./mips <file> -step     Step through\n\n";
+    std::cout << "\033[2J\033[H";
+    std::cout << "╔═════════════════════════════════════════════════════════════════════════════════════╗\n";
+    std::cout << "║                                                                                     ║\n";
+    std::cout << "║   ███╗   ███╗██╗██████╗ ███████╗    ██╗███╗   ██╗████████╗███████╗██████╗ ██████╗   ║\n";
+    std::cout << "║   ████╗ ████║██║██╔══██╗██╔════╝    ██║████╗  ██║╚══██╔══╝██╔════╝██╔══██╗██╔══██╗  ║\n";
+    std::cout << "║   ██╔████╔██║██║██████╔╝███████╗    ██║██╔██╗ ██║   ██║   █████╗  ██████╔╝██████╔╝  ║\n";
+    std::cout << "║   ██║╚██╔╝██║██║██╔═══╝ ╚════██║    ██║██║╚██╗██║   ██║   ██╔══╝  ██╔══██╗██╔═══╝   ║\n";
+    std::cout << "║   ██║ ╚═╝ ██║██║██║     ███████║    ██║██║ ╚████║   ██║   ███████╗██║  ██║██║       ║\n";
+    std::cout << "║   ╚═╝     ╚═╝╚═╝╚═╝     ╚══════╝    ╚═╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝       ║\n";
+    std::cout << "║                                                                                     ║\n";
+    std::cout << "║                                    by Brysen Landis                                 ║\n";
+    std::cout << "║                                                                                     ║\n";
+    std::cout << "╚═════════════════════════════════════════════════════════════════════════════════════╝\n\n";
+    std::cout << "  USAGE:\n";
+    std::cout << "    ./a.out                 → Interactive mode\n";
+    std::cout << "    ./a.out <file>          → Load and run program\n";
+    std::cout << "    ./a.out <file> -step    → Step through execution\n\n";
+    std::cout << "Press Enter to start interactive mode...";
+    std::cin.get();
 }
 
 int main(int argc, char* argv[])
@@ -40,7 +54,22 @@ int main(int argc, char* argv[])
         
         if (argc > 2 && std::string(argv[2]) == "-step")
         {
-            std::cout << "\nStep mode (Enter=next, r=regs, q=quit)\n";
+            std::cout << "\033[2J\033[H";
+            std::cout << "╔════════════════════════════════════════════════════════════════════════════════════════════════════╗\n";
+            std::cout << "║                                                                                                    ║\n";
+            std::cout << "║   ███╗   ███╗██╗██████╗ ███████╗    ██╗███╗   ██╗████████╗███████╗██████╗ ██████╗                ║\n";
+            std::cout << "║   ████╗ ████║██║██╔══██╗██╔════╝    ██║████╗  ██║╚══██╔══╝██╔════╝██╔══██╗██╔══██╗               ║\n";
+            std::cout << "║   ██╔████╔██║██║██████╔╝███████╗    ██║██╔██╗ ██║   ██║   █████╗  ██████╔╝██████╔╝               ║\n";
+            std::cout << "║   ██║╚██╔╝██║██║██╔═══╝ ╚════██║    ██║██║╚██╗██║   ██║   ██╔══╝  ██╔══██╗██╔═══╝                ║\n";
+            std::cout << "║   ██║ ╚═╝ ██║██║██║     ███████║    ██║██║ ╚████║   ██║   ███████╗██║  ██║██║                    ║\n";
+            std::cout << "║   ╚═╝     ╚═╝╚═╝╚═╝     ╚══════╝    ╚═╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝                    ║\n";
+            std::cout << "║                                                                                                    ║\n";
+            std::cout << "║                                       STEP MODE                                                    ║\n";
+            std::cout << "║                                                                                                    ║\n";
+            std::cout << "╚════════════════════════════════════════════════════════════════════════════════════════════════════╝\n\n";
+            
+            interpreter.displayState();
+            std::cout << "\nPress Enter=next, r=regs, q=quit\n";
             std::string input;
             
             while (true)
@@ -50,9 +79,20 @@ int main(int argc, char* argv[])
                 
                 if (input == "q" || input == "quit") break;
                 if (input == "r" || input == "regs") {
+                    std::cout << "\033[2J\033[H";
+                    std::cout << "╔════════════════════════════════════════════════════════════════════════════════════════════════════╗\n";
+                    std::cout << "║                                       STEP MODE                                                    ║\n";
+                    std::cout << "╚════════════════════════════════════════════════════════════════════════════════════════════════════╝\n\n";
                     interpreter.displayState();
+                    std::cout << "\nPress Enter=next, r=regs, q=quit\n";
                 } else {
                     interpreter.step();
+                    std::cout << "\033[2J\033[H";
+                    std::cout << "╔════════════════════════════════════════════════════════════════════════════════════════════════════╗\n";
+                    std::cout << "║                                       STEP MODE                                                    ║\n";
+                    std::cout << "╚════════════════════════════════════════════════════════════════════════════════════════════════════╝\n\n";
+                    interpreter.displayState();
+                    std::cout << "\nPress Enter=next, r=regs, q=quit\n";
                 }
             }
         }

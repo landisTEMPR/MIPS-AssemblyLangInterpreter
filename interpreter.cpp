@@ -10,9 +10,30 @@ MIPSInterpreter::MIPSInterpreter()
     : PC(TEXT_BASE), HI(0), LO(0), currentDataAddr(DATA_BASE), 
       inDataSection(false), halted(false)
 {
-    // Initialize stack pointer
     regFile.setReg("$sp", STACK_BASE);
 }
+
+void MIPSInterpreter::clearScreen()
+{
+    std::cout << "\033[2J\033[H";
+}
+
+void MIPSInterpreter::printBanner(const std::string& mode)
+{
+    std::cout << "╔═════════════════════════════════════════════════════════════════════════════════════╗\n";
+    std::cout << "║                                                                                     ║\n";
+    std::cout << "║   ███╗   ███╗██╗██████╗ ███████╗    ██╗███╗   ██╗████████╗███████╗██████╗ ██████╗   ║\n";
+    std::cout << "║   ████╗ ████║██║██╔══██╗██╔════╝    ██║████╗  ██║╚══██╔══╝██╔════╝██╔══██╗██╔══██╗  ║\n";
+    std::cout << "║   ██╔████╔██║██║██████╔╝███████╗    ██║██╔██╗ ██║   ██║   █████╗  ██████╔╝██████╔╝  ║\n";
+    std::cout << "║   ██║╚██╔╝██║██║██╔═══╝ ╚════██║    ██║██║╚██╗██║   ██║   ██╔══╝  ██╔══██╗██╔═══╝   ║\n";
+    std::cout << "║   ██║ ╚═╝ ██║██║██║     ███████║    ██║██║ ╚████║   ██║   ███████╗██║  ██║██║       ║\n";
+    std::cout << "║   ╚═╝     ╚═╝╚═╝╚═╝     ╚══════╝    ╚═╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝       ║\n";
+    std::cout << "║                                                                                     ║\n";
+    std::cout << "║                                      " << std::setw(16) << std::left << mode << "                               ║\n";
+    std::cout << "║                                                                                     ║\n";
+    std::cout << "╚═════════════════════════════════════════════════════════════════════════════════════╝\n\n";
+}
+
 
 std::string MIPSInterpreter::cleanLine(const std::string& line)
 {
@@ -1013,7 +1034,8 @@ void MIPSInterpreter::reset()
 void MIPSInterpreter::runInteractive()
 {
     std::string input;
-    std::cout << "MIPS Interpreter\n";
+    clearScreen();
+    printBanner("INTERACTIVE MODE");
     std::cout << "Commands: load <file>, run, step, regs, manual, reset, quit\n\n";
     
     while (true)
@@ -1044,16 +1066,24 @@ void MIPSInterpreter::runInteractive()
         }
         else if (tokens[0] == "regs")
         {
+            clearScreen();
+            printBanner("INTERACTIVE MODE");
             displayState();
+            std::cout << "\nCommands: load <file>, run, step, regs, manual, reset, quit\n\n";
         }
         else if (tokens[0] == "reset")
         {
             reset();
-            std::cout << "Reset.\n";
+            clearScreen();
+            printBanner("INTERACTIVE MODE");
+            std::cout << "Reset.\n\nCommands: load <file>, run, step, regs, manual, reset, quit\n\n";
         }
         else if (tokens[0] == "manual" || tokens[0] == "m")
         {
             runManualMode();
+            clearScreen();
+            printBanner("INTERACTIVE MODE");
+            std::cout << "Commands: load <file>, run, step, regs, manual, reset, quit\n\n";
         }
         else
         {
@@ -1065,7 +1095,10 @@ void MIPSInterpreter::runInteractive()
 void MIPSInterpreter::runManualMode()
 {
     std::string input;
-    std::cout << "\nManual instruction mode (type 'back' to exit)\n";
+    clearScreen();
+    printBanner("MANUAL MODE");
+    displayState();
+    std::cout << "\nType MIPS instructions or 'back' to exit\n\n";
     
     while (true)
     {
@@ -1077,17 +1110,22 @@ void MIPSInterpreter::runManualMode()
         
         if (cleaned == "back" || cleaned == "exit" || cleaned == "quit")
         {
-            std::cout << "\n";
             break;
         }
         else if (cleaned == "regs")
         {
+            clearScreen();
+            printBanner("MANUAL MODE");
             displayState();
+            std::cout << "\nType MIPS instructions or 'back' to exit\n\n";
         }
         else
         {
             executeInstruction(cleaned);
-            std::cout << "PC: 0x" << std::hex << PC << std::dec << "\n";
+            clearScreen();
+            printBanner("MANUAL MODE");
+            displayState();
+            std::cout << "\nType MIPS instructions or 'back' to exit\n\n";
         }
     }
 }

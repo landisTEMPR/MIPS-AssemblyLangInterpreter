@@ -3,8 +3,8 @@ File: interpreter.h
 Author: Brysen Landis
 */
 
-#ifndef INTERPRETER_COMPLETE_H
-#define INTERPRETER_COMPLETE_H
+#ifndef INTERPRETER_H
+#define INTERPRETER_H
 
 #include <iostream>
 #include <vector>
@@ -70,6 +70,9 @@ private:
     int getRegisterNumber(const std::string& regName);
     bool isLabel(const std::string& token);
     unsigned int getLabelAddress(const std::string& label);
+    
+    void clearScreen();
+    void printBanner(const std::string& mode);
 };
 
 #endif
